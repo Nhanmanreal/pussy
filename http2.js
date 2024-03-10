@@ -1,7 +1,6 @@
 const cluster = require("cluster")
 const https = require("https")
 const http = require("http")
-const fakeua = require("fake-useragent")
 const tls = require("tls")
 const http2 = require("http2")
 const target = process.argv[2]
